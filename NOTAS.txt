@@ -1,0 +1,10 @@
+
+
+Cmds ng:
+ng generate module usuarios --routing
+ng generate service usuarios/usuarios
+ng generate component usuarios/usuarios-listado
+
+Siguentes pasos:
+- Module Auth con JWT (Login + Registro).
+- Generalizar/abstraer para guardar como punto partida otros proyectos.
