@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-
-  { path: 'usuarios', loadChildren: () => import('./usuarios/usuarios.module').then(m => m.UsuariosModule) } // these routes will be loaded lazily
+  { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) }, // lazy load
+  { path: 'usuarios', loadChildren: () => import('./usuarios/usuarios.module').then(m => m.UsuariosModule) }
 ];
 
 @NgModule({

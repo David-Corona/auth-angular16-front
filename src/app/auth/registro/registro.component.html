@@ -1,0 +1,110 @@
+<div class="d-flex align-items-center h-100">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card p-4 mb-4">
+          <div class="card-body">
+
+            <form class="mt-4" #registerForm="ngForm" (ngSubmit)="createAccount()">
+              <!-- <div class="mb-4" style="align-content: center;text-align: center;">
+                <img src="assets/logo.png" [routerLink]="['/auth/login']" height="60" alt="Logo xxxx">
+              </div> -->
+              <h3>Registro</h3>
+              <p class="text-muted">Introduzca sus datos para crear la cuenta.</p>
+              <div class="mb-3">
+                <div>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="nameUser"
+                    placeholder="Nombre"
+                    [(ngModel)]="nuevoUsuario.nombre"
+                    #nameModel="ngModel"
+                    pattern="[A-Za-z][A-Za-z\s]*"
+                    [ngClass]="validClasses(nameModel, 'is-valid', 'is-invalid')"
+                    required
+                  />
+                  <div class="invalid-feedback" *ngIf="nameModel.errors?.['required']">
+                    El nombre es obligatorio.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="nameModel.errors?.['pattern']">
+                    El nombre debe incluir sólo letras y espacios.
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div>
+                  <input
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    placeholder="Email"
+                    [(ngModel)]="nuevoUsuario.email"
+                    #emailModel="ngModel"
+                    pattern="^\S+@\S+\.\S+$"
+                    [ngClass]="validClasses(emailModel, 'is-valid', 'is-invalid')"
+                    required
+                  />
+                  <div class="invalid-feedback" *ngIf="emailModel.errors?.['required']">
+                    El email es obligatorio.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="emailModel.errors?.['pattern']">
+                    El email debe tener un formato válido.
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    placeholder="Contraseña"
+                    [(ngModel)]="nuevoUsuario.password"
+                    #passwordModel="ngModel"
+                    minlength="6"
+                    [ngClass]="validClasses(passwordModel, 'is-valid', 'is-invalid')"
+                    required
+                  />
+                  <div class="invalid-feedback" *ngIf="passwordModel.errors?.['required']">
+                    La contraseña es obligatoria.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="passwordModel.errors?.['minlength']">
+                    La contraseña debe contener al menos 6 caracteres.
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="password2"
+                    placeholder="Repite Contraseña"
+                    [(ngModel)]="passRep"
+                    #pass2Model="ngModel"
+                    pattern="{{ passwordModel.value }}"
+                    [ngClass]="validClasses(pass2Model, 'is-valid', 'is-invalid')"
+                    required
+                  />
+                  <div class="invalid-feedback" *ngIf="pass2Model.errors?.['required']">
+                    La contraseña es obligatoria.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="pass2Model.errors?.['pattern']">
+                    Esta contraseña debe coincidir con la anterior.
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-danger" id="errorInfo"></p>
+              <a class="btn btn-secondary me-2" [routerLink]="['/auth/login']" role="button">Volver</a>
+              <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Registrar</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

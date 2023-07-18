@@ -6,17 +6,27 @@ import { AppComponent } from './app.component';
 import { UsuariosListadoComponent } from './usuarios/usuarios-listado/usuarios-listado.component';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { HttpClientModule } from '@angular/common/http';
+import { AuthModule } from './auth/auth.module';
+// import { HeaderComponent } from './header/header.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
     AppComponent,
+    // HeaderComponent,
     // UsuariosListadoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    UsuariosModule
+    ToastrModule.forRoot({
+      positionClass :'toast-top-right'
+    }),
+    UsuariosModule,
+    AuthModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
