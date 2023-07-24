@@ -11,38 +11,46 @@ interface NuevoUsuario {
   email: string;
   password: string;
 }
+interface UsuarioLogin {
+  email: string;
+  password: string;
+}
+interface LoginResponse {
+  token: string,
+  expiresIn: number,
+  usuario_id: number
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  private token: string = "";
+
   constructor(
     private http: HttpClient
   ) { }
 
-
-  registrar(usuarioInfo: NuevoUsuario){
+  registrar(usuarioInfo: NuevoUsuario) {
     return this.http.post(API_URL_AUTH + "registro", usuarioInfo)
-      // .subscribe({
-      //   next: () => this.router.navigate(["/"]),
-      //   error: () =>  this.authStatusListener.next(false)
-      // });
   }
 
-  // createUser(email: string, password: string) {
-  //   const authData: AuthData = {email: email, password: password};
-  //   return this.http.post(BACKEND_URL + "signup", authData)
-  //     .subscribe({
-  //       next: () => this.router.navigate(["/"]),
-  //       error: () =>  this.authStatusListener.next(false)
-  //     });
-  // }
+  login(userLogin: UsuarioLogin) {
+    return this.http.post<LoginResponse>(API_URL_AUTH + "login", userLogin)
+    .subscribe({
+      next: (resp: LoginResponse) => {
+        this.token = resp.token;
+        console.log(resp);
+      },
+      error: e => {
+        console.error(e.error.message || "Error al loguear.");
+      }
+    })
+  }
 
-  // register(userInfo: any): Observable<any> {
-  //   return this.http.post<any>(`${this.authURL}/register`, userInfo).pipe(
-  //     map(resp => resp)
-  //   )
-  // }
+  getToken() {
+    return this.token;
+  }
 
 }

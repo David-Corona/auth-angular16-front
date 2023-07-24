@@ -1,15 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-// import { NgForm } from "@angular/forms";
-import { Subscription } from "rxjs";
-
-import { AuthService } from '../auth.service';
-
-
 import { Router } from '@angular/router';
 import { NgModel } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
-
+import { AuthService } from '../auth.service';
+//import { Subscription } from "rxjs";
 
 
 @Component({
@@ -18,6 +13,10 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./registro.component.css']
 })
 export class RegistroComponent implements OnInit, OnDestroy{
+
+  // TODO: Limpiar codigo
+  // Añadir spinner
+
 
   // isLoading = false;
   // private authStatusSub!: Subscription;
@@ -45,7 +44,6 @@ export class RegistroComponent implements OnInit, OnDestroy{
   }
 
 
-
   nuevoUsuario = {
     nombre: "",
     email: "",
@@ -63,28 +61,25 @@ export class RegistroComponent implements OnInit, OnDestroy{
 
   ngOnInit(): void {
     this.titleService.setTitle("Registro | xxxxx");
-    this.resetForm();
+    this.resetForm(); //TODO: Necesario?
   }
 
   validClasses(ngModel: NgModel, validClass: string, errorClass: string) {
-    // sólo valida al ser "tocado"
-    return {
+    return { // sólo valida al ser "tocado"
       [validClass]: ngModel.touched && ngModel.valid,
       [errorClass]: ngModel.touched && ngModel.invalid,
     };
   }
 
-
   createAccount() {
-    this.authService.registrar(this.nuevoUsuario)
-    .subscribe({
+    this.authService.registrar(this.nuevoUsuario).subscribe({
       next: () => {
         this.router.navigate(['/auth/login']);
         this.toastr.success('Cuenta creada correctamente');
       },
       error: (e: any) => {
         console.error(e);
-        this.toastr.error('Error al crear la cuenta');
+        this.toastr.error(e.error.message  || 'Error al crear la cuenta');
       }
     });
   }

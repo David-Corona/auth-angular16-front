@@ -3,6 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) }, // lazy load
+
+
+  // TODO
   { path: 'usuarios', loadChildren: () => import('./usuarios/usuarios.module').then(m => m.UsuariosModule) }
 ];
 

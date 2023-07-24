@@ -5,8 +5,7 @@ import { UsuariosListadoComponent } from './usuarios-listado/usuarios-listado.co
 
 
 const routes: Routes = [
-  { path: 'test', component: UsuariosListadoComponent },
-
+  { path: '', component: UsuariosListadoComponent },
 
 ];
 
