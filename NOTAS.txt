@@ -7,4 +7,14 @@ ng generate component usuarios/usuarios-listado
 
 Siguentes pasos:
 - Module Auth con JWT (Login + Registro).
+- Guards
 - Generalizar/abstraer para guardar como punto partida otros proyectos.
+
+Notas:
+- Forms: template drive vs reactive. Template driven ok para forms sencillos.
+
+
+
+
+https://jasonwatmore.com/post/2022/11/15/angular-14-jwt-authentication-example-tutorial
+https://medium.com/techdevathe/jwt-authentication-with-angular-14-ebfcb66a0a07
