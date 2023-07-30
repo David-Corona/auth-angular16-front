@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 // import { UserLogin } from '../interfaces/user';
 import { AuthService } from '../auth.service';
+import { SessionStorageService } from 'src/app/_services/session-storage.service';
 
 
 @Component({
@@ -19,16 +20,24 @@ export class LoginComponent implements OnInit {
     password: ""
   }
 
+  isLoggedIn = false;
+
   constructor(
     private titleService: Title,
     private authService: AuthService,
     private toastr: ToastrService,
     private router: Router,
+    private storageService: SessionStorageService
   ) { }
 
   ngOnInit(): void {
     this.titleService.setTitle("Login | xxxxx");
     this.resetForm(); // TODO - necesario?
+
+    // TODO necesario?
+    if (this.storageService.isLoggedIn()) {
+      this.isLoggedIn = true;
+    }
   }
 
   tryLogin() {

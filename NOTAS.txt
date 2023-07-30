@@ -12,9 +12,14 @@ Siguentes pasos:
 
 Notas:
 - Forms: template drive vs reactive. Template driven ok para forms sencillos.
+- Usar refresh Token solo para el endpoint de refresco de token
+
+TODO:
+
+- Testear auth con varias pestañas
 
 
+https://www.bezkoder.com/angular-16-jwt-auth/
+https://www.bezkoder.com/angular-16-refresh-token/
+https://medium.com/@an.sajinsatheesan/refresh-token-interceptor-angular-10-d876d01561be
 
-
-https://jasonwatmore.com/post/2022/11/15/angular-14-jwt-authentication-example-tutorial
-https://medium.com/techdevathe/jwt-authentication-with-angular-14-ebfcb66a0a07

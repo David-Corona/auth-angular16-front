@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { SessionStorageService } from '../_services/session-storage.service';
 
 
 const API_URL_AUTH = environment.apiURL + "/auth/";
 
-// TODO - mover
+// TODO - mover interfaces
 interface NuevoUsuario {
   nombre: string;
   email: string;
@@ -16,8 +18,9 @@ interface UsuarioLogin {
   password: string;
 }
 interface LoginResponse {
-  token: string,
-  expiresIn: number,
+  accessToken: string,
+  // access_token_expires_in: number,
+  // refresh_token_expires_in: number
   usuario_id: number
 }
 
@@ -26,11 +29,17 @@ interface LoginResponse {
 })
 export class AuthService {
 
-  private token: string = "";
-  private isAuthenticated = false;
+  // private token: string = "";
+  // private isAuthenticated = false;
+
+  // const httpOptions = {
+  //   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  // };
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router,
+    private storageService: SessionStorageService,
   ) { }
 
   registrar(usuarioInfo: NuevoUsuario) {
@@ -41,13 +50,16 @@ export class AuthService {
     return this.http.post<LoginResponse>(API_URL_AUTH + "login", userLogin)
     .subscribe({
       next: (resp: LoginResponse) => {
-        this.token = resp.token;
-        const expirationDate = new Date(new Date().getTime() + resp.expiresIn * 1000);
-        this.saveAuthData(this.token, expirationDate, resp.usuario_id)
-
-
-        this.isAuthenticated = true;
         console.log(resp);
+        this.storageService.saveUser(resp);
+        console.log("SAVE USER: ", this.storageService.getUser());
+
+        this.router.navigate(['/usuarios']); // TODO - Por ejemplo, ya que requiere auth
+        // TODO: reload or redirect
+        // window.location.reload();
+
+        // const expirationDate = new Date(new Date().getTime() + resp.access_token_expires_in * 1000); // TODO ?
+
       },
       error: e => {
         console.error(e.error.message || "Error al loguear.");
@@ -55,38 +67,25 @@ export class AuthService {
     })
   }
 
-  getToken() {
-    return this.token;
+  refreshToken() {
+    return this.http.post(API_URL_AUTH + "refresh-token", null) // , { withCredentials: true } Añade el cookie con el refreshToken
+
   }
 
-  getIsAuthenticated(): boolean {
-    return this.isAuthenticated;
-  }
-
-  private saveAuthData(token: string, expirationDate: Date, userId: number) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('expiration', expirationDate.toISOString());
-    localStorage.setItem('userId', userId.toString());
-  }
-
-  private clearAuthData() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("expiration");
-    localStorage.removeItem("userId");
-  }
-
-  private getAuthData() {
-    const token = localStorage.getItem("token");
-    const expirationDate = localStorage.getItem("expiration");
-    const userId = localStorage.getItem("userId");
-    if (!token || !expirationDate) {
-      return;
-    }
-    return {
-      token: token,
-      expirationDate: new Date(expirationDate),
-      userId: userId
-    }
+  logout() {
+    const usuario_id = {usuario_id: this.storageService.getUser().usuario_id}
+    return this.http.post(API_URL_AUTH + "logout", usuario_id)
+      .subscribe({
+        next: res => {
+          console.log(res);
+          this.storageService.clean();
+          this.router.navigate(['/auth/login']);
+          // reload or relocate // window.location.reload();
+        },
+        error: err => {
+          console.error(err);
+        }
+      });
   }
 
 }

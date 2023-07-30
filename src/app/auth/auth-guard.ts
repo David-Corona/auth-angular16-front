@@ -1,19 +1,20 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { AuthService } from './auth.service';
+import { SessionStorageService } from '../_services/session-storage.service';
 
 export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const sessionStorage = inject(SessionStorageService)
 
-  // TODO - descomentar una vez finalizada auth
-  if (authService.getIsAuthenticated()) {
-    // return true;
+  // TODO - implementar (equivalente a canDeactive) para no acceder a login/registro si está logueado
+  if (sessionStorage.isLoggedIn()) {
     console.log("Guard: Authenticated");
+    return true;
   }
   console.log("Guard: Not Authenticated");
-  // return router.parseUrl('/auth/login');
+  return router.parseUrl('/auth/login');
 };
 
 
