@@ -1,22 +1,22 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER  } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-// import { UsuariosListadoComponent } from './usuarios/usuarios-listado/usuarios-listado.component';
-import { UsuariosModule } from './usuarios/usuarios.module';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthModule } from './auth/auth.module';
-// import { HeaderComponent } from './header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+
+import { AppComponent } from './app.component';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AuthModule } from './auth/auth.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+
 import { AuthInterceptor } from './auth/auth-interceptor';
+import { AuthService } from './auth/auth.service';
+import { appInitializer } from './_shared/app-initializer';
 
 @NgModule({
   declarations: [
     AppComponent,
-    // HeaderComponent,
-    // UsuariosListadoComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +29,10 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     AuthModule,
     BrowserAnimationsModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AuthService], multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

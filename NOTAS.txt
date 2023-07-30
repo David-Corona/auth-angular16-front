@@ -12,10 +12,10 @@ Siguentes pasos:
 
 Notas:
 - Forms: template drive vs reactive. Template driven ok para forms sencillos.
-- Usar refresh Token solo para el endpoint de refresco de token
+- Conservar cookie al cerrar y abrir navegador. Mantener sesión iniciada. App Initializer
 
 TODO:
-
+- Usar refresh Token solo para el endpoint de refresco de token
 - Testear auth con varias pestañas
 
 

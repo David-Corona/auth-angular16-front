@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { SessionStorageService } from '../_services/session-storage.service';
+import { EventBusService } from '../_services/event-bus.service';
+import { EventData } from '../_shared/event-data.class';
 
 
 const API_URL_AUTH = environment.apiURL + "/auth/";
@@ -40,6 +42,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private storageService: SessionStorageService,
+    private eventBusService: EventBusService
   ) { }
 
   registrar(usuarioInfo: NuevoUsuario) {
@@ -67,9 +70,24 @@ export class AuthService {
     })
   }
 
-  refreshToken() {
-    return this.http.post(API_URL_AUTH + "refresh-token", null) // , { withCredentials: true } Añade el cookie con el refreshToken
+  autoLogin() {
+    this.refreshToken().subscribe({
+      next: resp => {
+        this.storageService.saveUser(resp);
+        this.router.navigate(['/usuarios']); // TODO
+      },
+      error: e => {
+        if (e.status === 403) {
+          // this.handleLogout();
+          // this.eventBusService.emit(new EventData('logout', null)); // TODO: Necesario?
+          this.router.navigate(['/auth/login']);
+        }
+      }
+    });
+  }
 
+  refreshToken() {
+    return this.http.post(API_URL_AUTH + "refresh-token", null) //  , { withCredentials: true }Añade el cookie con el refreshToken
   }
 
   logout() {
