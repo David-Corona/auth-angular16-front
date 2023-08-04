@@ -31,6 +31,8 @@ export class AuthInterceptor implements HttpInterceptor {
     //handle 401 status on interceptor response (except response of /signin request).
     return next.handle(req).pipe(
       catchError((error) => {
+        console.log("REQ", req);
+        console.log("Error", error);
         if (error instanceof HttpErrorResponse && error.status === 401 && !req.url.includes('auth/login')) {
           return this.handle401Error(req, next);
         }
@@ -40,12 +42,13 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
-
+    console.log("Handling 401 error");
+    console.log(this.isRefreshing);
     if (!this.isRefreshing) {
       this.isRefreshing = true;
-
+      console.log("Logged in session", this.storageService.isLoggedIn());
       //if the user is logged in, call AuthService.refreshToken() method.
-      if (this.storageService.isLoggedIn()) {
+      // if (this.storageService.isLoggedIn()) {
         return this.authService.refreshToken().pipe(
           switchMap((resp: any) => { // TODO, interface loginresponse?
             this.isRefreshing = false;
@@ -69,7 +72,7 @@ export class AuthInterceptor implements HttpInterceptor {
             return throwError(() => error);
           })
         );
-      }
+      // }
     }
 
     return next.handle(request);

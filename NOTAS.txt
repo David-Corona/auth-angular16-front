@@ -1,24 +1,34 @@
+# TODO
+- Eliminar app-initializer?
+- Reactivar Guard.
+- Usar refresh Token solo para el endpoint de refresco de token.
+- Testear auth con varias pestañas.
+- Contraseña olvidada y reseteo.
+- Implementar Guard (equivalente a canDeactive) para no acceder a login/registro si está logueado.
+- Comprobar: El token expira en el navegador? Parece que deja de enviarse pasado el plazo.
+- Generalizar/abstraer para guardar como punto partida otros proyectos.
+- Comprobar TODOs
 
 
-Cmds ng:
+
+# NOTAS
+- Forms: template drive vs reactive. Template driven ok para forms sencillos.
+- Conservar cookie al cerrar y abrir navegador. Mantener sesión iniciada. App Initializer
+- Auth
+  Cuando hay 401 => refreshToken.
+  Si refreshToken ha expirado o invalido => Devuelve 403 para que no entre en bucle.
+  Si refreshToken OK => Devuelve otro accessToken
+
+
+
+# CMDs ANGULAR
 ng generate module usuarios --routing
 ng generate service usuarios/usuarios
 ng generate component usuarios/usuarios-listado
 
-Siguentes pasos:
-- Module Auth con JWT (Login + Registro).
-- Guards
-- Generalizar/abstraer para guardar como punto partida otros proyectos.
-
-Notas:
-- Forms: template drive vs reactive. Template driven ok para forms sencillos.
-- Conservar cookie al cerrar y abrir navegador. Mantener sesión iniciada. App Initializer
-
-TODO:
-- Usar refresh Token solo para el endpoint de refresco de token
-- Testear auth con varias pestañas
 
 
+# ENLACES ÚTILES
 https://www.bezkoder.com/angular-16-jwt-auth/
 https://www.bezkoder.com/angular-16-refresh-token/
 https://medium.com/@an.sajinsatheesan/refresh-token-interceptor-angular-10-d876d01561be

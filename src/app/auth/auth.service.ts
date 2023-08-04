@@ -71,19 +71,19 @@ export class AuthService {
   }
 
   autoLogin() {
-    this.refreshToken().subscribe({
-      next: resp => {
-        this.storageService.saveUser(resp);
-        this.router.navigate(['/usuarios']); // TODO
-      },
-      error: e => {
-        if (e.status === 403) {
-          // this.handleLogout();
-          // this.eventBusService.emit(new EventData('logout', null)); // TODO: Necesario?
-          this.router.navigate(['/auth/login']);
-        }
-      }
-    });
+    // this.refreshToken().subscribe({
+    //   next: resp => {
+    //     this.storageService.saveUser(resp);
+    //     this.router.navigate(['/usuarios']); // TODO
+    //   },
+    //   error: e => {
+    //     if (e.status === 403) {
+    //       // this.handleLogout();
+    //       // this.eventBusService.emit(new EventData('logout', null)); // TODO: Necesario?
+    //       this.router.navigate(['/auth/login']);
+    //     }
+    //   }
+    // });
   }
 
   refreshToken() {
