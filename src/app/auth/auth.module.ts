@@ -12,16 +12,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 
-
 import { AuthRoutingModule } from './auth-routing.module';
 import { RegistroComponent } from './registro/registro.component';
 import { LoginComponent } from './login/login.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 
 @NgModule({
   declarations: [
     RegistroComponent,
-    LoginComponent
+    LoginComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent
   ],
   imports: [
     CommonModule,

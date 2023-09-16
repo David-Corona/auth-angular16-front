@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { SessionStorageService } from '../_services/session-storage.service';
 import { EventBusService } from '../_services/event-bus.service';
 import { EventData } from '../_shared/event-data.class';
+import { Observable, map } from 'rxjs';
 
 
 const API_URL_AUTH = environment.apiURL + "/auth/";
@@ -104,6 +105,14 @@ export class AuthService {
           console.error(err);
         }
       });
+  }
+
+  recoverPassword(email: String): Observable<any> {
+    return this.http.post<any>(API_URL_AUTH + "forgot-password", {"email": email})
+  }
+
+  resetPassword(usuario_id: String, password: String, token: String): Observable<any> {
+    return this.http.post<any>(API_URL_AUTH + "reset-password", {usuario_id, password, token})
   }
 
 }
