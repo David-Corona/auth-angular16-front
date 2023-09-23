@@ -36,12 +36,12 @@ export class SessionStorageService {
     return {};
   }
 
-  public isLoggedIn(): boolean {
-    const user = window.sessionStorage.getItem(USER_KEY);
-    if (user) {
-      return true;
-    }
+  // public isLoggedIn(): boolean {
+  //   const user = window.sessionStorage.getItem(USER_KEY);
+  //   if (user) {
+  //     return true;
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 }

@@ -14,12 +14,12 @@ export class AppComponent {
   // title = 'juego-front';
   // isLoggedIn = false;
 
-  // eventBusSub?: Subscription;
+  eventBusSub?: Subscription;
 
   constructor(
     // private storageService: SessionStorageService,
-    // private authService: AuthService,
-    // private eventBusService: EventBusService
+    private authService: AuthService,
+    private eventBusService: EventBusService
   ) {}
 
   ngOnInit(): void {
@@ -35,23 +35,23 @@ export class AppComponent {
     //   // this.username = user.username;
     // }
 
-    // this.eventBusSub = this.eventBusService.on('logout', () => {
-    //   this.logout();
-    // });
+    this.eventBusSub = this.eventBusService.on('logout', () => {
+      this.logout();
+    });
   }
 
-  // logout(): void {
-  //   this.authService.logout()
-  //   // .subscribe({
-  //   //   next: res => {
-  //   //     console.log(res);
-  //   //     this.storageService.clean();
+  logout(): void {
+    this.authService.logout()
+    // .subscribe({
+    //   next: res => {
+    //     console.log(res);
+    //     this.storageService.clean();
 
-  //   //     window.location.reload();
-  //   //   },
-  //   //   error: err => {
-  //   //     console.log(err);
-  //   //   }
-  //   // });
-  // }
+    //     window.location.reload();
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //   }
+    // });
+  }
 }

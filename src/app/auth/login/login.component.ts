@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
     password: ""
   }
 
-  isLoggedIn = false;
+  // isLoggedIn = false;
 
   constructor(
     private titleService: Title,
@@ -35,16 +35,15 @@ export class LoginComponent implements OnInit {
     this.resetForm(); // TODO - necesario?
 
     // TODO necesario?
-    if (this.storageService.isLoggedIn()) {
-      this.isLoggedIn = true;
-    }
+    // if (this.storageService.isLoggedIn()) {
+    //   this.isLoggedIn = true;
+    // }
   }
 
   tryLogin() {
     this.authService.login(this.user)
     // .subscribe({
     //   next: () => {
-
     //     // this.router.navigate(['/auth/login']);
     //     // this.toastr.success('Cuenta creada correctamente');
     //   },

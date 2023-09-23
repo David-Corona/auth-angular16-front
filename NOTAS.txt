@@ -1,15 +1,13 @@
 # TODO
-- Eliminar app-initializer?
-- Testear/review EventData & EventBusService
+- Testear/review EventData & EventBusService => Eliminar si no se reutiliza
 - Usar refresh Token solo para el endpoint de refresco de token.
 - Testear auth con varias pestañas.
-- Contraseña olvidada y reseteo.
-- Reactivar Guard.
 - Implementar Guard (equivalente a canDeactive) para no acceder a login/registro si está logueado.
 - Comprobar: El token expira en el navegador? Parece que deja de enviarse pasado el plazo.
 - Generalizar/abstraer para guardar como punto partida otros proyectos.
 - Comprobar TODOs
-
+- Actualizar AuthInterceptor cuando se actualice refreshToken del back para enviar 400/401 en vez de 403.
+- Corregir tipado any
 
 
 # NOTAS
@@ -26,11 +24,3 @@
 ng generate module usuarios --routing
 ng generate service usuarios/usuarios
 ng generate component usuarios/usuarios-listado
-
-
-
-# ENLACES ÚTILES
-https://www.bezkoder.com/angular-16-jwt-auth/
-https://www.bezkoder.com/angular-16-refresh-token/
-https://medium.com/@an.sajinsatheesan/refresh-token-interceptor-angular-10-d876d01561be
-

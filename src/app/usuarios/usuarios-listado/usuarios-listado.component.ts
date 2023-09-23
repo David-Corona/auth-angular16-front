@@ -14,8 +14,9 @@ export class UsuariosListadoComponent implements OnInit {
   async ngOnInit() {
     console.log("En listado usuarios");
     await this.usuariosService.getUsuarios()
-      .subscribe(res => {
-        console.log("Res", res);
+      .subscribe({
+        next: res => console.log("Res", res),
+        error: e => console.error(e.error.message || "Error al listar usuarios.")
       });
   }
 

@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 import { SessionStorageService } from '../_services/session-storage.service';
 import { EventBusService } from '../_services/event-bus.service';
 import { EventData } from '../_shared/event-data.class';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, switchMap, throwError } from 'rxjs';
 
 
 const API_URL_AUTH = environment.apiURL + "/auth/";
@@ -22,8 +22,8 @@ interface UsuarioLogin {
 }
 interface LoginResponse {
   accessToken: string,
-  // access_token_expires_in: number,
-  // refresh_token_expires_in: number
+  expires_in: number,
+  expires_at?: number,
   usuario_id: number
 }
 
@@ -31,6 +31,8 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
+  // TODO-ObsGuard
+  private authenticationStatus = new BehaviorSubject<boolean>(false);
 
   // private token: string = "";
   // private isAuthenticated = false;
@@ -39,12 +41,22 @@ export class AuthService {
   //   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   // };
 
+  // private refreshTokenInProgress = false;
+
   constructor(
     private http: HttpClient,
     private router: Router,
     private storageService: SessionStorageService,
     private eventBusService: EventBusService
   ) { }
+
+  // TODO-ObsGuard
+  setAuthenticationStatus(status: boolean) {
+    this.authenticationStatus.next(status);
+  }
+  getAuthenticationStatus() {
+    return this.authenticationStatus.asObservable();
+  }
 
   registrar(usuarioInfo: NuevoUsuario) {
     return this.http.post(API_URL_AUTH + "registro", usuarioInfo)
@@ -54,16 +66,16 @@ export class AuthService {
     return this.http.post<LoginResponse>(API_URL_AUTH + "login", userLogin)
     .subscribe({
       next: (resp: LoginResponse) => {
-        console.log(resp);
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+        resp.expires_at = currentTimestamp + resp.expires_in;
         this.storageService.saveUser(resp);
         console.log("SAVE USER: ", this.storageService.getUser());
+
+        this.setAuthenticationStatus(true); // TODO-ObsGuard
 
         this.router.navigate(['/usuarios']); // TODO - Por ejemplo, ya que requiere auth
         // TODO: reload or redirect
         // window.location.reload();
-
-        // const expirationDate = new Date(new Date().getTime() + resp.access_token_expires_in * 1000); // TODO ?
-
       },
       error: e => {
         console.error(e.error.message || "Error al loguear.");
@@ -71,20 +83,42 @@ export class AuthService {
     })
   }
 
-  autoLogin() {
-    // this.refreshToken().subscribe({
-    //   next: resp => {
-    //     this.storageService.saveUser(resp);
-    //     this.router.navigate(['/usuarios']); // TODO
-    //   },
-    //   error: e => {
-    //     if (e.status === 403) {
-    //       // this.handleLogout();
-    //       // this.eventBusService.emit(new EventData('logout', null)); // TODO: Necesario?
-    //       this.router.navigate(['/auth/login']);
-    //     }
-    //   }
-    // });
+  isAuthenticated(): Observable<boolean> {
+    const token = this.storageService.getUser().accessToken;
+
+    if (token && this.isTokenValid()) {
+      console.log("isAuthenticated() - True");
+      return of(true);
+    } else {
+      return this.refreshToken().pipe(
+        switchMap(resp => {
+          console.log("Refreshed Token: ", resp);
+          this.storageService.saveUser(resp);
+          return of(true);
+        }),
+        catchError(e => {
+          console.log("isAuthenticated() - False");
+          console.error(e);
+          return of(false);
+        })
+      );
+    }
+  }
+
+  isTokenValid(): boolean {
+    console.log("isTokenValid()");
+    const loggedUser = this.storageService.getUser();
+
+    if (!loggedUser || !loggedUser.expires_at) {
+      return false;
+    }
+
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    if (loggedUser.expires_at > currentTimestamp) {
+      return true;
+    }
+
+    return false;
   }
 
   refreshToken() {
@@ -93,6 +127,7 @@ export class AuthService {
 
   logout() {
     const usuario_id = {usuario_id: this.storageService.getUser().usuario_id}
+    console.log("Logout() - usuario: ", usuario_id);
     return this.http.post(API_URL_AUTH + "logout", usuario_id)
       .subscribe({
         next: res => {
@@ -101,9 +136,7 @@ export class AuthService {
           this.router.navigate(['/auth/login']);
           // reload or relocate // window.location.reload();
         },
-        error: err => {
-          console.error(err);
-        }
+        error: err => console.error(err)
       });
   }
 

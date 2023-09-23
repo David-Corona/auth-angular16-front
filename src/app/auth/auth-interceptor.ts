@@ -10,7 +10,7 @@ import { EventData } from "../_shared/event-data.class";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private isRefreshing = false;
+  private tokenIsRefreshing = false; // para evitar multiples requests de refresh token simultaneas
 
   constructor(
     private storageService: SessionStorageService,
@@ -20,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    // Clonar request y añadir cookie si es a auth/refreshToken
+    // Clonar request y añadir tokens // TODO:añadir cookie solo si es a auth/refreshToken
     const accessToken = this.storageService.getUser().accessToken;
     // const isRefreshTokenReq = req.url.includes('auth/refresh-token') ? true : false;
     req = req.clone({
@@ -28,11 +28,9 @@ export class AuthInterceptor implements HttpInterceptor {
       withCredentials: true
     });
 
-    //handle 401 status on interceptor response (except response of /signin request).
+    // Next, a menos que salte error. Y en caso de 401, manejarlo (excepto si es intento de login).
     return next.handle(req).pipe(
       catchError((error) => {
-        console.log("REQ", req);
-        console.log("Error", error);
         if (error instanceof HttpErrorResponse && error.status === 401 && !req.url.includes('auth/login')) {
           return this.handle401Error(req, next);
         }
@@ -43,17 +41,19 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
     console.log("Handling 401 error");
-    console.log(this.isRefreshing);
-    if (!this.isRefreshing) {
-      this.isRefreshing = true;
-      console.log("Logged in session", this.storageService.isLoggedIn());
+    console.log(this.tokenIsRefreshing);
+    if (!this.tokenIsRefreshing) {
+      this.tokenIsRefreshing = true;
+      // console.log("Logged in session", this.storageService.isLoggedIn());
       //if the user is logged in, call AuthService.refreshToken() method.
       // if (this.storageService.isLoggedIn()) {
         return this.authService.refreshToken().pipe(
           switchMap((resp: any) => { // TODO, interface loginresponse?
-            this.isRefreshing = false;
+            this.tokenIsRefreshing = false;
 
-            // Actualiza sesión y request con nuevo accessToken
+            // this.authService.setAuthenticationStatus(true); // TODO-ObsGuard
+
+            // Actualiza sesión con usuario y request con accessToken
             this.storageService.saveUser(resp);
             request = request.clone({
               headers: request.headers.set('Authorization', "Bearer " +  resp.accessToken), // añade nuevo accessToken
@@ -62,9 +62,12 @@ export class AuthInterceptor implements HttpInterceptor {
             return next.handle(request);
           }),
           catchError((error) => {
-            this.isRefreshing = false;
+            this.tokenIsRefreshing = false;
+
+            // this.authService.setAuthenticationStatus(false); // TODO-ObsGuard
 
             //f the API returns response with 403 error (the refresh token is expired), emit 'logout' event.
+            // TODO - necesario? llamar logout() directamente
             if (error.status == '403') {
               this.eventBusService.emit(new EventData('logout', null));
             }

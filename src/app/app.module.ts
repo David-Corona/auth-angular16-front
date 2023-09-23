@@ -11,8 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 
 import { AuthInterceptor } from './auth/auth-interceptor';
-import { AuthService } from './auth/auth.service';
-import { appInitializer } from './_shared/app-initializer';
+
+
 
 @NgModule({
   declarations: [
@@ -30,8 +30,7 @@ import { appInitializer } from './_shared/app-initializer';
     BrowserAnimationsModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: APP_INITIALIZER, useFactory: appInitializer, deps: [AuthService], multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
