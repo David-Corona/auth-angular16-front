@@ -1,23 +1,20 @@
 # TODO
-- Testear/review EventData & EventBusService => Eliminar si no se reutiliza
 - Usar refresh Token solo para el endpoint de refresco de token.
-- Testear auth con varias pestañas.
 - Implementar Guard (equivalente a canDeactive) para no acceder a login/registro si está logueado.
-- Comprobar: El token expira en el navegador? Parece que deja de enviarse pasado el plazo.
 - Generalizar/abstraer para guardar como punto partida otros proyectos.
 - Comprobar TODOs
 - Actualizar AuthInterceptor cuando se actualice refreshToken del back para enviar 400/401 en vez de 403.
-- Corregir tipado any
+- Corregir tipado any, respuestas y returns
 
 
 # NOTAS
 - Forms: template drive vs reactive. Template driven ok para forms sencillos.
-- Conservar cookie al cerrar y abrir navegador. Mantener sesión iniciada. App Initializer
 - Auth
   Cuando hay 401 => refreshToken.
   Si refreshToken ha expirado o invalido => Devuelve 403 para que no entre en bucle.
   Si refreshToken OK => Devuelve otro accessToken
-
+  El cookie se conserva aunque se cierre ventana y cuando expira, se elimina (y deja de enviarse en los requests)
+- Guard, comprueba auth, incluso hace refreshToken()
 
 
 # CMDs ANGULAR

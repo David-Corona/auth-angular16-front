@@ -4,8 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from "./auth.service";
 import { SessionStorageService } from "../_services/session-storage.service";
-import { EventBusService } from "../_services/event-bus.service";
-import { EventData } from "../_shared/event-data.class";
+import { LoginResponse } from "./auth.model";
 
 
 @Injectable()
@@ -14,14 +13,13 @@ export class AuthInterceptor implements HttpInterceptor {
 
   constructor(
     private storageService: SessionStorageService,
-    private authService: AuthService,
-    private eventBusService: EventBusService
+    private authService: AuthService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    // Clonar request y añadir tokens // TODO:añadir cookie solo si es a auth/refreshToken
-    const accessToken = this.storageService.getUser().accessToken;
+    // Clonar request y añadir tokens // TODO: añadir cookie solo si es a auth/refreshToken
+    const accessToken = this.storageService.getUser()?.accessToken;
     // const isRefreshTokenReq = req.url.includes('auth/refresh-token') ? true : false;
     req = req.clone({
       headers: req.headers.set('Authorization', "Bearer " +  accessToken),
@@ -40,48 +38,28 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
-    console.log("Handling 401 error");
-    console.log(this.tokenIsRefreshing);
     if (!this.tokenIsRefreshing) {
       this.tokenIsRefreshing = true;
-      // console.log("Logged in session", this.storageService.isLoggedIn());
-      //if the user is logged in, call AuthService.refreshToken() method.
-      // if (this.storageService.isLoggedIn()) {
-        return this.authService.refreshToken().pipe(
-          switchMap((resp: any) => { // TODO, interface loginresponse?
-            this.tokenIsRefreshing = false;
 
-            // this.authService.setAuthenticationStatus(true); // TODO-ObsGuard
-
-            // Actualiza sesión con usuario y request con accessToken
-            this.storageService.saveUser(resp);
-            request = request.clone({
-              headers: request.headers.set('Authorization', "Bearer " +  resp.accessToken), // añade nuevo accessToken
-            });
-
-            return next.handle(request);
-          }),
-          catchError((error) => {
-            this.tokenIsRefreshing = false;
-
-            // this.authService.setAuthenticationStatus(false); // TODO-ObsGuard
-
-            //f the API returns response with 403 error (the refresh token is expired), emit 'logout' event.
-            // TODO - necesario? llamar logout() directamente
-            if (error.status == '403') {
-              this.eventBusService.emit(new EventData('logout', null));
-            }
-
-            return throwError(() => error);
-          })
-        );
-      // }
+      return this.authService.refreshToken().pipe(
+        switchMap((resp: LoginResponse) => {
+          this.tokenIsRefreshing = false;
+          // Actualiza sesión con usuario y request con accessToken
+          this.storageService.saveUser(resp);
+          request = request.clone({
+            headers: request.headers.set('Authorization', "Bearer " +  resp.accessToken), // añade nuevo accessToken
+          });
+          return next.handle(request);
+        }),
+        catchError((error) => {
+          this.tokenIsRefreshing = false;
+          //f the API returns response with 403 error (the refresh token is expired), emit 'logout' event.
+          this.authService.logout();
+          return throwError(() => error);
+        })
+      );
     }
 
     return next.handle(request);
   }
 }
-
-// export const httpInterceptorProviders = [
-//   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-// ];
