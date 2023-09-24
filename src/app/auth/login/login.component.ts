@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-
-// import { UserLogin } from '../interfaces/user';
 import { AuthService } from '../auth.service';
-import { SessionStorageService } from 'src/app/_services/session-storage.service';
+import { UsuarioLogin } from '../auth.model';
 
 
 @Component({
@@ -15,50 +12,29 @@ import { SessionStorageService } from 'src/app/_services/session-storage.service
 })
 export class LoginComponent implements OnInit {
 
-  user: any = { //TODO: Interface
+  user: UsuarioLogin = {
     email: "",
     password: ""
   }
 
-  // isLoggedIn = false;
-
   constructor(
-    private titleService: Title,
     private authService: AuthService,
     private toastr: ToastrService,
-    private router: Router,
-    private storageService: SessionStorageService
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle("Login | xxxxx");
-    this.resetForm(); // TODO - necesario?
-
-    // TODO necesario?
-    // if (this.storageService.isLoggedIn()) {
-    //   this.isLoggedIn = true;
-    // }
   }
 
-  tryLogin() {
+  tryLogin(): void {
     this.authService.login(this.user)
-    // .subscribe({
-    //   next: () => {
-    //     // this.router.navigate(['/auth/login']);
-    //     // this.toastr.success('Cuenta creada correctamente');
-    //   },
-    //   error: (e: any) => {
-    //     console.error(e);
-    //     // this.toastr.error('Error: ' + e);
-    //   }
-    // });
-  }
-
-  resetForm() {
-    this.user = {
-      email: "",
-      password: ""
-    };
+      .subscribe({
+        next: () => this.router.navigate(['/usuarios']),
+        error: e => {
+          console.error("Login error", e);
+          this.toastr.error(e.error.message || 'Error al loguear');
+        }
+      });
   }
 
 }

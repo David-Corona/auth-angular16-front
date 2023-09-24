@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-
 import { AuthService } from '../auth.service';
 
 
@@ -21,7 +19,6 @@ export class ResetPasswordComponent implements OnInit {
   usuario_id: String = "";
 
   constructor(
-    private titleService: Title,
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
@@ -29,8 +26,6 @@ export class ResetPasswordComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle("Nueva Contraseña | xxxxx");
-    this.resetForm(); // TODO
     this.token = this.route.snapshot.paramMap.get('token')!;
     this.usuario_id = this.route.snapshot.paramMap.get('usuario_id')!;
   }
@@ -53,11 +48,6 @@ export class ResetPasswordComponent implements OnInit {
       [validClass]: ngModel.touched && ngModel.valid,
       [errorClass]: ngModel.touched && ngModel.invalid,
     };
-  }
-
-  resetForm() {
-    this.password = "";
-    this.password2 = "";
   }
 
 }

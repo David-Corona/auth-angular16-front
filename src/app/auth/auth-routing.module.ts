@@ -5,12 +5,12 @@ import { RegistroComponent } from './registro/registro.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
-// TODO - Añadir Guards
+
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'registro', component: RegistroComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'reset-password/:usuario_id/:token', component: ResetPasswordComponent }
+  { path: 'login', component: LoginComponent, title: 'Login | MySite' },
+  { path: 'registro', component: RegistroComponent, title: 'Registro | MySite' },
+  { path: 'forgot-password', component: ForgotPasswordComponent, title: 'Contraseña olvidada | MySite' },
+  { path: 'reset-password/:usuario_id/:token', component: ResetPasswordComponent, title: 'Nueva contraseña | MySite' }
 ];
 
 @NgModule({

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -15,23 +13,21 @@ export class ForgotPasswordComponent implements OnInit {
   email: String = "";
 
   constructor(
-    private titleService: Title,
     private authService: AuthService,
     private toastr: ToastrService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle("Contraseña Olvidada | xxxxx");
-    this.email = "";
   }
 
-
-  requestReset(){
+  requestReset(): void {
     this.authService.recoverPassword(this.email).subscribe({
       next: () => {
         this.toastr.success('Email enviado correctamente');
+        this.router.navigate(['/auth/login']);
       },
-      error: (e: any) => {
+      error: e => {
         console.error(e);
         this.toastr.error('Error al enviar el email');
       }

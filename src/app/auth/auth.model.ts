@@ -10,9 +10,21 @@ export interface UsuarioLogin {
   password: string;
 }
 
-export interface LoginResponse {
-  accessToken: string,
-  expires_in: number,
-  expires_at?: number,
-  usuario_id: number
+export interface TokenResponse {
+  message: string,
+  data: {
+    accessToken: string,
+    expires_in: number,
+    expires_at?: number,
+    usuario_id: number
+  }
 }
+
+export interface ApiResponse {
+  success?: boolean,
+  message: string,
+  data?: {},
+  error?: string,
+}
+
+

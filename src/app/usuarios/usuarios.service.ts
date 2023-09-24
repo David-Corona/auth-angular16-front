@@ -18,5 +18,4 @@ export class UsuariosService {
     return this.http.get(API_URL_USUARIOS);
   }
 
-
 }

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 const USER_KEY = 'auth-user';
 
-// Guardamos información del usuario en SessionStorage del navegador.
 
 interface StorageUser {
   accessToken: string,

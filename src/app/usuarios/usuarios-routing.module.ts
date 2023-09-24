@@ -5,7 +5,7 @@ import { UsuariosListadoComponent } from './usuarios-listado/usuarios-listado.co
 
 
 const routes: Routes = [
-  { path: '', component: UsuariosListadoComponent },
+  { path: '', component: UsuariosListadoComponent, title: 'Usuarios | MySite' },
 
 ];
 

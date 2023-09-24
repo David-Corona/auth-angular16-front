@@ -4,7 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { AuthService } from "./auth.service";
 import { SessionStorageService } from "../_services/session-storage.service";
-import { LoginResponse } from "./auth.model";
+import { TokenResponse } from "./auth.model";
 
 
 @Injectable()
@@ -26,13 +26,14 @@ export class AuthInterceptor implements HttpInterceptor {
       withCredentials: true
     });
 
-    // Next, a menos que salte error. Y en caso de 401, manejarlo (excepto si es intento de login).
+    // Next, a menos que salte error.
     return next.handle(req).pipe(
-      catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 401 && !req.url.includes('auth/login')) {
+      catchError((e) => {
+        // En caso de 401 (excepto si es intento de login o refresh token invalido) => refreshToken()
+        if (e instanceof HttpErrorResponse && e.status === 401 && e.error.error != "invalid-refreshtoken" && !req.url.includes('auth/login')) {
           return this.handle401Error(req, next);
         }
-        return throwError(() => error);
+        return throwError(() => e);
       })
     );
   }
@@ -42,19 +43,24 @@ export class AuthInterceptor implements HttpInterceptor {
       this.tokenIsRefreshing = true;
 
       return this.authService.refreshToken().pipe(
-        switchMap((resp: LoginResponse) => {
+        switchMap((resp: TokenResponse) => {
+          console.log("SWITCHMAP");
           this.tokenIsRefreshing = false;
           // Actualiza sesión con usuario y request con accessToken
-          this.storageService.saveUser(resp);
+          this.storageService.saveUser(resp.data);
           request = request.clone({
-            headers: request.headers.set('Authorization', "Bearer " +  resp.accessToken), // añade nuevo accessToken
+            headers: request.headers.set('Authorization', "Bearer " +  resp.data.accessToken), // añade nuevo accessToken
           });
           return next.handle(request);
         }),
         catchError((error) => {
+          console.log("CATCHERROR");
           this.tokenIsRefreshing = false;
-          //f the API returns response with 403 error (the refresh token is expired), emit 'logout' event.
-          this.authService.logout();
+          // API returns error (refresh token is expired), logout.
+          this.authService.logout()
+            .subscribe({
+              error: err => console.error("Error al desloguear", err)
+            });
           return throwError(() => error);
         })
       );
