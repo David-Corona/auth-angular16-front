@@ -1,6 +1,12 @@
 {
-  "name": "juego-front",
-  "version": "0.0.0",
+  "name": "auth-angular16-front",
+  "version": "1.0.0",
+  "author": "David Corona Collis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/David-Corona/auth-angular16-front.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

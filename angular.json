@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "juego-front": {
+    "auth-angular16-front": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/juego-front",
+            "outputPath": "dist/auth-angular16-front",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "juego-front:build:production"
+              "browserTarget": "auth-angular16-front:build:production"
             },
             "development": {
-              "browserTarget": "juego-front:build:development"
+              "browserTarget": "auth-angular16-front:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +82,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "juego-front:build"
+            "browserTarget": "auth-angular16-front:build"
           }
         },
         "test": {

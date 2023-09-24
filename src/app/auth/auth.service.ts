@@ -50,9 +50,7 @@ export class AuthService {
           return of(true);
         }),
         catchError(e => {
-          this.logout().subscribe({
-            error: err => console.error("Error al desloguear", err)
-          });
+          this.storageService.clean();
           console.error(e);
           return of(false);
         })
@@ -73,7 +71,7 @@ export class AuthService {
   }
 
   refreshToken(): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(API_URL_AUTH + "refresh-token", null) //  , { withCredentials: true }Añade el cookie con el refreshToken
+    return this.http.post<TokenResponse>(API_URL_AUTH + "refresh-token", null)
   }
 
   logout(): Observable<ApiResponse> {
@@ -88,6 +86,7 @@ export class AuthService {
         catchError(e => { throw e; })
       );
     } else {
+      // this.router.navigate(['/auth/login']);
       return EMPTY;
     }
   }
