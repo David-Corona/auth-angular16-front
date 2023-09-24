@@ -18,9 +18,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    // Clonar request y añadir tokens // TODO: añadir cookie solo si es a auth/refreshToken
+    // Clonar request y añadir tokens
     const accessToken = this.storageService.getUser()?.accessToken;
-    // const isRefreshTokenReq = req.url.includes('auth/refresh-token') ? true : false;
     req = req.clone({
       headers: req.headers.set('Authorization', "Bearer " +  accessToken),
       withCredentials: true
@@ -44,7 +43,6 @@ export class AuthInterceptor implements HttpInterceptor {
 
       return this.authService.refreshToken().pipe(
         switchMap((resp: TokenResponse) => {
-          console.log("SWITCHMAP");
           this.tokenIsRefreshing = false;
           // Actualiza sesión con usuario y request con accessToken
           this.storageService.saveUser(resp.data);
@@ -54,7 +52,6 @@ export class AuthInterceptor implements HttpInterceptor {
           return next.handle(request);
         }),
         catchError((error) => {
-          console.log("CATCHERROR");
           this.tokenIsRefreshing = false;
           // API returns error (refresh token is expired), logout.
           this.authService.logout()
